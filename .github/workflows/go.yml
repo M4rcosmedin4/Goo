@@ -26,7 +26,7 @@ jobs:
 
     - name: Wait for PostgreSQL
       run: |
-        until pg_isready -h localhost -U seu_usuario -d seu_banco_de_dados; do
+        until pg_isready -h localhost -U root -d root; do
           echo "Waiting for PostgreSQL to be ready..."
           sleep 5
         done
@@ -38,4 +38,4 @@ jobs:
         args: controllers/ database/ models/ routes/
 
     - name: Test
-      run: go test -v -host=localhost -user=root -password=root -dbname=root -port=5432 main_test.go
+      run: DB_HOST=localhost DB_USER=root DB_PASSWORD=root DB_NAME=root DB_PORT=5432 go test -vmain_test.go
