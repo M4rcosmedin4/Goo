@@ -11,8 +11,12 @@ on:
 
 jobs:
 
-  ci:
-    runs-on: ubuntu-latest
+  teste:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ['ubuntu-latest', 'ubuntu-20.04', 'ubuntu-22.04']
+
     steps:
     - uses: actions/checkout@v4
 
@@ -47,5 +51,17 @@ jobs:
       run: go test -v main_test.go
 
     
-    - name: Docker-auto
-      run: docker build .
+  build:
+    needs: teste
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ['ubuntu-latest', 'ubuntu-20.04', 'ubuntu-22.04']
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build
+      run: go build -v main.go
+  
+  Docker:
+    needs: build
+    uses: ./.github/workflows/Docker.yml
